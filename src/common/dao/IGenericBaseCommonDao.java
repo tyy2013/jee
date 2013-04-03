@@ -6,12 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
-import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
-import org.jeecgframework.core.common.hibernate.qbc.HqlQuery;
-import org.jeecgframework.core.common.hibernate.qbc.PageList;
-import org.jeecgframework.core.common.model.common.DBTable;
-import org.jeecgframework.core.common.model.json.DataGridReturn;
-import org.jeecgframework.tag.vo.datatable.DataTableReturn;
+
 import org.springframework.stereotype.Component;
 
 
@@ -29,7 +24,7 @@ public interface IGenericBaseCommonDao {
 	 * 获取所有数据库表
 	 * @return
 	 */
-	public List<DBTable> getAllDbTableName();
+//	public List<DBTable> getAllDbTableName();
 	public Integer getAllDbTableSize();
 	public <T> void save(T entity);
 
@@ -154,41 +149,41 @@ public interface IGenericBaseCommonDao {
 	 */
 	public <T> List<T> findByPropertyisOrder(Class<T> entityClass, String propertyName, Object value, boolean isAsc);
 
-	/**
-	 * 
-	 * cq方式分页
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public PageList getPageList(final CriteriaQuery cq, final boolean isOffset);
-	/**
-	 * 通过cq获取全部实体
-	 * 
-	 * @param <T>
-	 * @param cq
-	 * @return
-	 */
-	public <T> List<T> getListByCriteriaQuery(final CriteriaQuery cq,Boolean ispage);
-	/**
-	 * 
-	 * hqlQuery方式分页
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public PageList getPageList(final HqlQuery hqlQuery, final boolean needParameter);
-	/**
-	 * 
-	 * sqlQuery方式分页
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public PageList getPageListBySql(final HqlQuery hqlQuery, final boolean needParameter);
+//	/**
+//	 * 
+//	 * cq方式分页
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public PageList getPageList(final CriteriaQuery cq, final boolean isOffset);
+//	/**
+//	 * 通过cq获取全部实体
+//	 * 
+//	 * @param <T>
+//	 * @param cq
+//	 * @return
+//	 */
+//	public <T> List<T> getListByCriteriaQuery(final CriteriaQuery cq,Boolean ispage);
+//	/**
+//	 * 
+//	 * hqlQuery方式分页
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public PageList getPageList(final HqlQuery hqlQuery, final boolean needParameter);
+//	/**
+//	 * 
+//	 * sqlQuery方式分页
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public PageList getPageListBySql(final HqlQuery hqlQuery, final boolean needParameter);
 	public Session getSession();
 	public List findByExample(final String entityName, final Object exampleEntity);
 	/**
@@ -199,19 +194,19 @@ public interface IGenericBaseCommonDao {
 	 * @return
 	 */
 	public Map<Object,Object> getHashMapbyQuery(String query);
-	/**
-	 * 返回jquery datatables模型
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public DataTableReturn getDataTableReturn(final CriteriaQuery cq, final boolean isOffset);
-	/**
-	 * 返回easyui datagrid模型
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public DataGridReturn getDataGridReturn(final CriteriaQuery cq, final boolean isOffset);
+//	/**
+//	 * 返回jquery datatables模型
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public DataTableReturn getDataTableReturn(final CriteriaQuery cq, final boolean isOffset);
+//	/**
+//	 * 返回easyui datagrid模型
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public DataGridReturn getDataGridReturn(final CriteriaQuery cq, final boolean isOffset);
 
 }

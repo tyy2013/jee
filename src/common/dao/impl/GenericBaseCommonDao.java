@@ -1,4 +1,4 @@
-package org.jeecgframework.core.common.dao.impl;
+package common.dao.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,18 +29,9 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.type.Type;
-import org.jeecgframework.core.common.dao.IGenericBaseCommonDao;
-import org.jeecgframework.core.common.exception.BusinessException;
-import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
-import org.jeecgframework.core.common.hibernate.qbc.DetachedCriteriaUtil;
-import org.jeecgframework.core.common.hibernate.qbc.HqlQuery;
-import org.jeecgframework.core.common.hibernate.qbc.PageList;
-import org.jeecgframework.core.common.hibernate.qbc.PagerUtil;
-import org.jeecgframework.core.common.model.common.DBTable;
-import org.jeecgframework.core.common.model.json.DataGridReturn;
-import org.jeecgframework.core.util.ToEntityUtil;
-import org.jeecgframework.core.util.oConvertUtils;
-import org.jeecgframework.tag.vo.datatable.DataTableReturn;
+import common.dao.IGenericBaseCommonDao;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
