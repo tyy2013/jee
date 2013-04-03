@@ -9,7 +9,7 @@
 	<display-name>"自定义标签"</display-name>
 	<tag>
 		<name>base</name>
-		<tag-class>org.jeecgframework.tag.core.easyui.BaseTag</tag-class>
+		<tag-class>tag.easyui.BaseTag</tag-class>
 		<body-content>jsp</body-content>
 		<description>父类标签生成JS CSS</description>
 		<attribute>
@@ -19,5 +19,30 @@
 			<description>加载类型</description>
 		</attribute>
 	</tag>
-
+	<!-- 菜单生成控件 -->
+	<tag>
+		<name>menu</name>
+		<tag-class>tag.easyui.MenuTag</tag-class>
+		<body-content>jsp</body-content>
+		<display-name>左侧菜单生成控件</display-name>
+		<small-icon>111</small-icon>
+		<description>左侧菜单生成控件可选样式easyui,bootstrap,json</description>
+		<attribute>
+			<name>style</name>
+			<rtexprvalue>true</rtexprvalue>
+			<description>菜单样式</description>
+		</attribute>
+		<attribute>
+			<name>parentFun</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>一级菜单</description>
+		</attribute>
+		<attribute>
+			<name>childFun</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>二级菜单</description>
+		</attribute>
+	</tag>
 </taglib>
