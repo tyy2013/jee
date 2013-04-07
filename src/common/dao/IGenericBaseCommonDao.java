@@ -9,6 +9,8 @@ import org.hibernate.Session;
 
 import org.springframework.stereotype.Component;
 
+import common.mode.DBTable;
+
 
 
 /**
@@ -24,7 +26,7 @@ public interface IGenericBaseCommonDao {
 	 * 获取所有数据库表
 	 * @return
 	 */
-//	public List<DBTable> getAllDbTableName();
+	public List<DBTable> getAllDbTableName();
 	public Integer getAllDbTableSize();
 	public <T> void save(T entity);
 

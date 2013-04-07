@@ -1,4 +1,4 @@
-package mode;
+package common.mode;
 
 import java.io.Serializable;
 

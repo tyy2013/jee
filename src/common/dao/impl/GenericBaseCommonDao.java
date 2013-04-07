@@ -30,6 +30,8 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.type.Type;
 import common.dao.IGenericBaseCommonDao;
+import common.exception.BusinessException;
+import common.mode.DBTable;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import util.oConvertUtils;
 
 
 /**
@@ -530,188 +534,188 @@ public abstract class GenericBaseCommonDao<T, PK extends Serializable> implement
 		int count = DataAccessUtils.intResult(getSession().createQuery("select count(*) from " + clazz.getName()).list());
 		return count;
 	}
-
-	/**
-	 * 获取分页记录CriteriaQuery 老方法final int allCounts = oConvertUtils.getInt(criteria .setProjection(Projections.rowCount()).uniqueResult(), 0);
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public PageList getPageList(final CriteriaQuery cq, final boolean isOffset) {
-
-		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
-		CriteriaImpl impl = (CriteriaImpl) criteria;
-		// 先把Projection和OrderBy条件取出来,清空两者来执行Count操作
-		Projection projection = impl.getProjection();
-		final int allCounts = ((Long) criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
-		criteria.setProjection(projection);
-		if (projection == null) {
-			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
-		}
-
-		// 判断是否有排序字段
-		if (cq.getOrdermap() != null) {
-			cq.setOrder(cq.getOrdermap());
-		}
-		int pageSize = cq.getPageSize();// 每页显示数
-		int curPageNO = PagerUtil.getcurPageNo(allCounts, cq.getCurPage(), pageSize);// 当前页
-		int offset = PagerUtil.getOffset(allCounts, curPageNO, pageSize);
-		String toolBar = "";
-		if (isOffset) {// 是否分页
-			criteria.setFirstResult(offset);
-			criteria.setMaxResults(cq.getPageSize());
-			if (cq.getIsUseimage() == 1) {
-				toolBar = PagerUtil.getBar(cq.getMyAction(), cq.getMyForm(), allCounts, curPageNO, pageSize, cq.getMap());
-			} else {
-				toolBar = PagerUtil.getBar(cq.getMyAction(), allCounts, curPageNO, pageSize, cq.getMap());
-			}
-		} else {
-			pageSize = allCounts;
-		}
-		return new PageList(criteria.list(), toolBar, offset, curPageNO, allCounts);
-	}
-
-	/**
-	 * 返回JQUERY datatables DataTableReturn模型对象
-	 */
-	public DataTableReturn getDataTableReturn(final CriteriaQuery cq, final boolean isOffset) {
-
-		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
-		CriteriaImpl impl = (CriteriaImpl) criteria;
-		// 先把Projection和OrderBy条件取出来,清空两者来执行Count操作
-		Projection projection = impl.getProjection();
-		final int allCounts = ((Long) criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
-		criteria.setProjection(projection);
-		if (projection == null) {
-			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
-		}
-
-		// 判断是否有排序字段
-		if (cq.getOrdermap() != null) {
-			cq.setOrder(cq.getOrdermap());
-		}
-		int pageSize = cq.getPageSize();// 每页显示数
-		int curPageNO = PagerUtil.getcurPageNo(allCounts, cq.getCurPage(), pageSize);// 当前页
-		int offset = PagerUtil.getOffset(allCounts, curPageNO, pageSize);
-		if (isOffset) {// 是否分页
-			criteria.setFirstResult(offset);
-			criteria.setMaxResults(cq.getPageSize());
-		} else {
-			pageSize = allCounts;
-		}
-		DetachedCriteriaUtil.selectColumn(cq.getDetachedCriteria(), cq.getField().split(","), cq.getEntityClass(), false);
-		return new DataTableReturn(allCounts, allCounts, cq.getDataTables().getEcho(), criteria.list());
-	}
-
-	/**
-	 * 返回easyui datagrid DataGridReturn模型对象
-	 */
-	public DataGridReturn getDataGridReturn(final CriteriaQuery cq, final boolean isOffset) {
-		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
-		CriteriaImpl impl = (CriteriaImpl) criteria;
-		// 先把Projection和OrderBy条件取出来,清空两者来执行Count操作
-		Projection projection = impl.getProjection();
-		final int allCounts = ((Long) criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
-		criteria.setProjection(projection);
-		if (projection == null) {
-			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
-		}
-		//-----update-begin---author:zhangdaihao date:20130206 for:排序字段---
-		if (StringUtils.isNotBlank(cq.getDataGrid().getSort())) {
-		//-----update-begin---author:zhangdaihao date:20130206 for:排序字段---
-			cq.addOrder(cq.getDataGrid().getSort(), cq.getDataGrid().getOrder());
-		}
-
-		// 判断是否有排序字段
-		if (!cq.getOrdermap().isEmpty()) {
-			cq.setOrder(cq.getOrdermap());
-		}
-		int pageSize = cq.getPageSize();// 每页显示数
-		int curPageNO = PagerUtil.getcurPageNo(allCounts, cq.getCurPage(), pageSize);// 当前页
-		int offset = PagerUtil.getOffset(allCounts, curPageNO, pageSize);
-		if (isOffset) {// 是否分页
-			criteria.setFirstResult(offset);
-			criteria.setMaxResults(cq.getPageSize());
-		} else {
-			pageSize = allCounts;
-		}
-		// DetachedCriteriaUtil.selectColumn(cq.getDetachedCriteria(),
-		// cq.getField().split(","), cq.getClass1(), false);
-		List list = criteria.list();
-		cq.getDataGrid().setReaults(list);
-		cq.getDataGrid().setTotal(allCounts);
-		return new DataGridReturn(allCounts, list);
-	}
-
-	/**
-	 * 获取分页记录SqlQuery
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public PageList getPageListBySql(final HqlQuery hqlQuery, final boolean isToEntity) {
-
-		Query query = getSession().createSQLQuery(hqlQuery.getQueryString());
-
-		// query.setParameters(hqlQuery.getParam(), (Type[])
-		// hqlQuery.getTypes());
-		int allCounts = query.list().size();
-		int curPageNO = hqlQuery.getCurPage();
-		int offset = PagerUtil.getOffset(allCounts, curPageNO, hqlQuery.getPageSize());
-		query.setFirstResult(offset);
-		query.setMaxResults(hqlQuery.getPageSize());
-		List list = null;
-		if (isToEntity) {
-			list = ToEntityUtil.toEntityList(query.list(), hqlQuery.getClass1(), hqlQuery.getDataGrid().getField().split(","));
-		} else {
-			list = query.list();
-		}
-		return new PageList(hqlQuery, list, offset, curPageNO, allCounts);
-	}
-
-	/**
-	 * 获取分页记录HqlQuery
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public PageList getPageList(final HqlQuery hqlQuery, final boolean needParameter) {
-
-		Query query = getSession().createQuery(hqlQuery.getQueryString());
-		if (needParameter) {
-			query.setParameters(hqlQuery.getParam(), (Type[]) hqlQuery.getTypes());
-		}
-		int allCounts = query.list().size();
-		int curPageNO = hqlQuery.getCurPage();
-		int offset = PagerUtil.getOffset(allCounts, curPageNO, hqlQuery.getPageSize());
-		String toolBar = PagerUtil.getBar(hqlQuery.getMyaction(), allCounts, curPageNO, hqlQuery.getPageSize(), hqlQuery.getMap());
-		query.setFirstResult(offset);
-		query.setMaxResults(hqlQuery.getPageSize());
-		return new PageList(query.list(), toolBar, offset, curPageNO, allCounts);
-	}
-
-	/**
-	 * 根据CriteriaQuery获取List
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<T> getListByCriteriaQuery(final CriteriaQuery cq, Boolean ispage) {
-		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
-		// 判断是否有排序字段
-		if (cq.getOrdermap() != null) {
-			cq.setOrder(cq.getOrdermap());
-		}
-		if (ispage)
-			criteria.setMaxResults(cq.getPageSize());
-		return criteria.list();
-
-	}
+//
+//	/**
+//	 * 获取分页记录CriteriaQuery 老方法final int allCounts = oConvertUtils.getInt(criteria .setProjection(Projections.rowCount()).uniqueResult(), 0);
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public PageList getPageList(final CriteriaQuery cq, final boolean isOffset) {
+//
+//		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
+//		CriteriaImpl impl = (CriteriaImpl) criteria;
+//		// 先把Projection和OrderBy条件取出来,清空两者来执行Count操作
+//		Projection projection = impl.getProjection();
+//		final int allCounts = ((Long) criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
+//		criteria.setProjection(projection);
+//		if (projection == null) {
+//			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
+//		}
+//
+//		// 判断是否有排序字段
+//		if (cq.getOrdermap() != null) {
+//			cq.setOrder(cq.getOrdermap());
+//		}
+//		int pageSize = cq.getPageSize();// 每页显示数
+//		int curPageNO = PagerUtil.getcurPageNo(allCounts, cq.getCurPage(), pageSize);// 当前页
+//		int offset = PagerUtil.getOffset(allCounts, curPageNO, pageSize);
+//		String toolBar = "";
+//		if (isOffset) {// 是否分页
+//			criteria.setFirstResult(offset);
+//			criteria.setMaxResults(cq.getPageSize());
+//			if (cq.getIsUseimage() == 1) {
+//				toolBar = PagerUtil.getBar(cq.getMyAction(), cq.getMyForm(), allCounts, curPageNO, pageSize, cq.getMap());
+//			} else {
+//				toolBar = PagerUtil.getBar(cq.getMyAction(), allCounts, curPageNO, pageSize, cq.getMap());
+//			}
+//		} else {
+//			pageSize = allCounts;
+//		}
+//		return new PageList(criteria.list(), toolBar, offset, curPageNO, allCounts);
+//	}
+//
+//	/**
+//	 * 返回JQUERY datatables DataTableReturn模型对象
+//	 */
+//	public DataTableReturn getDataTableReturn(final CriteriaQuery cq, final boolean isOffset) {
+//
+//		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
+//		CriteriaImpl impl = (CriteriaImpl) criteria;
+//		// 先把Projection和OrderBy条件取出来,清空两者来执行Count操作
+//		Projection projection = impl.getProjection();
+//		final int allCounts = ((Long) criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
+//		criteria.setProjection(projection);
+//		if (projection == null) {
+//			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
+//		}
+//
+//		// 判断是否有排序字段
+//		if (cq.getOrdermap() != null) {
+//			cq.setOrder(cq.getOrdermap());
+//		}
+//		int pageSize = cq.getPageSize();// 每页显示数
+//		int curPageNO = PagerUtil.getcurPageNo(allCounts, cq.getCurPage(), pageSize);// 当前页
+//		int offset = PagerUtil.getOffset(allCounts, curPageNO, pageSize);
+//		if (isOffset) {// 是否分页
+//			criteria.setFirstResult(offset);
+//			criteria.setMaxResults(cq.getPageSize());
+//		} else {
+//			pageSize = allCounts;
+//		}
+//		DetachedCriteriaUtil.selectColumn(cq.getDetachedCriteria(), cq.getField().split(","), cq.getEntityClass(), false);
+//		return new DataTableReturn(allCounts, allCounts, cq.getDataTables().getEcho(), criteria.list());
+//	}
+//
+//	/**
+//	 * 返回easyui datagrid DataGridReturn模型对象
+//	 */
+//	public DataGridReturn getDataGridReturn(final CriteriaQuery cq, final boolean isOffset) {
+//		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
+//		CriteriaImpl impl = (CriteriaImpl) criteria;
+//		// 先把Projection和OrderBy条件取出来,清空两者来执行Count操作
+//		Projection projection = impl.getProjection();
+//		final int allCounts = ((Long) criteria.setProjection(Projections.rowCount()).uniqueResult()).intValue();
+//		criteria.setProjection(projection);
+//		if (projection == null) {
+//			criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
+//		}
+//		//-----update-begin---author:zhangdaihao date:20130206 for:排序字段---
+//		if (StringUtils.isNotBlank(cq.getDataGrid().getSort())) {
+//		//-----update-begin---author:zhangdaihao date:20130206 for:排序字段---
+//			cq.addOrder(cq.getDataGrid().getSort(), cq.getDataGrid().getOrder());
+//		}
+//
+//		// 判断是否有排序字段
+//		if (!cq.getOrdermap().isEmpty()) {
+//			cq.setOrder(cq.getOrdermap());
+//		}
+//		int pageSize = cq.getPageSize();// 每页显示数
+//		int curPageNO = PagerUtil.getcurPageNo(allCounts, cq.getCurPage(), pageSize);// 当前页
+//		int offset = PagerUtil.getOffset(allCounts, curPageNO, pageSize);
+//		if (isOffset) {// 是否分页
+//			criteria.setFirstResult(offset);
+//			criteria.setMaxResults(cq.getPageSize());
+//		} else {
+//			pageSize = allCounts;
+//		}
+//		// DetachedCriteriaUtil.selectColumn(cq.getDetachedCriteria(),
+//		// cq.getField().split(","), cq.getClass1(), false);
+//		List list = criteria.list();
+//		cq.getDataGrid().setReaults(list);
+//		cq.getDataGrid().setTotal(allCounts);
+//		return new DataGridReturn(allCounts, list);
+//	}
+//
+//	/**
+//	 * 获取分页记录SqlQuery
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public PageList getPageListBySql(final HqlQuery hqlQuery, final boolean isToEntity) {
+//
+//		Query query = getSession().createSQLQuery(hqlQuery.getQueryString());
+//
+//		// query.setParameters(hqlQuery.getParam(), (Type[])
+//		// hqlQuery.getTypes());
+//		int allCounts = query.list().size();
+//		int curPageNO = hqlQuery.getCurPage();
+//		int offset = PagerUtil.getOffset(allCounts, curPageNO, hqlQuery.getPageSize());
+//		query.setFirstResult(offset);
+//		query.setMaxResults(hqlQuery.getPageSize());
+//		List list = null;
+//		if (isToEntity) {
+//			list = ToEntityUtil.toEntityList(query.list(), hqlQuery.getClass1(), hqlQuery.getDataGrid().getField().split(","));
+//		} else {
+//			list = query.list();
+//		}
+//		return new PageList(hqlQuery, list, offset, curPageNO, allCounts);
+//	}
+//
+//	/**
+//	 * 获取分页记录HqlQuery
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public PageList getPageList(final HqlQuery hqlQuery, final boolean needParameter) {
+//
+//		Query query = getSession().createQuery(hqlQuery.getQueryString());
+//		if (needParameter) {
+//			query.setParameters(hqlQuery.getParam(), (Type[]) hqlQuery.getTypes());
+//		}
+//		int allCounts = query.list().size();
+//		int curPageNO = hqlQuery.getCurPage();
+//		int offset = PagerUtil.getOffset(allCounts, curPageNO, hqlQuery.getPageSize());
+//		String toolBar = PagerUtil.getBar(hqlQuery.getMyaction(), allCounts, curPageNO, hqlQuery.getPageSize(), hqlQuery.getMap());
+//		query.setFirstResult(offset);
+//		query.setMaxResults(hqlQuery.getPageSize());
+//		return new PageList(query.list(), toolBar, offset, curPageNO, allCounts);
+//	}
+//
+//	/**
+//	 * 根据CriteriaQuery获取List
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public List<T> getListByCriteriaQuery(final CriteriaQuery cq, Boolean ispage) {
+//		Criteria criteria = cq.getDetachedCriteria().getExecutableCriteria(getSession());
+//		// 判断是否有排序字段
+//		if (cq.getOrdermap() != null) {
+//			cq.setOrder(cq.getOrdermap());
+//		}
+//		if (ispage)
+//			criteria.setMaxResults(cq.getPageSize());
+//		return criteria.list();
+//
+//	}
 }

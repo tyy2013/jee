@@ -1,4 +1,4 @@
-package org.jeecgframework.core.common.service.impl;
+package common.service.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -8,27 +8,16 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import jeecg.system.pojo.base.TSDepart;
+
 
 import org.hibernate.Session;
-import org.jeecgframework.core.common.dao.ICommonDao;
-import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
-import org.jeecgframework.core.common.hibernate.qbc.HqlQuery;
-import org.jeecgframework.core.common.hibernate.qbc.PageList;
-import org.jeecgframework.core.common.model.common.DBTable;
-import org.jeecgframework.core.common.model.common.UploadFile;
-import org.jeecgframework.core.common.model.json.ComboTree;
-import org.jeecgframework.core.common.model.json.DataGridReturn;
-import org.jeecgframework.core.common.model.json.ImportFile;
-import org.jeecgframework.core.common.model.json.TreeGrid;
-import org.jeecgframework.core.common.service.CommonService;
-import org.jeecgframework.core.extend.template.Template;
-import org.jeecgframework.tag.vo.datatable.DataTableReturn;
-import org.jeecgframework.tag.vo.easyui.Autocomplete;
-import org.jeecgframework.tag.vo.easyui.ComboTreeModel;
-import org.jeecgframework.tag.vo.easyui.TreeGridModel;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import common.dao.ICommonDao;
+import common.mode.DBTable;
+import common.service.CommonService;
 
 
 @Service("commonService")
@@ -205,66 +194,65 @@ public class CommonServiceImpl implements CommonService {
 		return commonDao.findByPropertyisOrder(entityClass, propertyName, value, isAsc);
 	}
 
-	/**
-	 * 
-	 * cq方式分页
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public PageList getPageList(final CriteriaQuery cq, final boolean isOffset) {
-		return commonDao.getPageList(cq, isOffset);
-	}
-
-	/**
-	 * 返回DataTableReturn模型
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public DataTableReturn getDataTableReturn(final CriteriaQuery cq, final boolean isOffset) {
-		return commonDao.getDataTableReturn(cq, isOffset);
-	}
-
-	/**
-	 * 返回easyui datagrid模型
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public DataGridReturn getDataGridReturn(final CriteriaQuery cq, final boolean isOffset) {
-		return commonDao.getDataGridReturn(cq, isOffset);
-	}
-
-	/**
-	 * 
-	 * hqlQuery方式分页
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public PageList getPageList(final HqlQuery hqlQuery, final boolean needParameter) {
-		return commonDao.getPageList(hqlQuery, needParameter);
-	}
-
-	/**
-	 * 
-	 * sqlQuery方式分页
-	 * 
-	 * @param cq
-	 * @param isOffset
-	 * @return
-	 */
-	public PageList getPageListBySql(final HqlQuery hqlQuery, final boolean isToEntity) {
-		return commonDao.getPageListBySql(hqlQuery, isToEntity);
-	}
+//	/**
+//	 * 
+//	 * cq方式分页
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public PageList getPageList(final CriteriaQuery cq, final boolean isOffset) {
+//		return commonDao.getPageList(cq, isOffset);
+//	}
+//
+//	/**
+//	 * 返回DataTableReturn模型
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public DataTableReturn getDataTableReturn(final CriteriaQuery cq, final boolean isOffset) {
+//		return commonDao.getDataTableReturn(cq, isOffset);
+//	}
+//
+//	/**
+//	 * 返回easyui datagrid模型
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public DataGridReturn getDataGridReturn(final CriteriaQuery cq, final boolean isOffset) {
+//		return commonDao.getDataGridReturn(cq, isOffset);
+//	}
+//
+//	/**
+//	 * 
+//	 * hqlQuery方式分页
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public PageList getPageList(final HqlQuery hqlQuery, final boolean needParameter) {
+//		return commonDao.getPageList(hqlQuery, needParameter);
+//	}
+//
+//	/**
+//	 * 
+//	 * sqlQuery方式分页
+//	 * 
+//	 * @param cq
+//	 * @param isOffset
+//	 * @return
+//	 */
+//	public PageList getPageListBySql(final HqlQuery hqlQuery, final boolean isToEntity) {
+//		return commonDao.getPageListBySql(hqlQuery, isToEntity);
+//	}
 
 	public Session getSession()
-
 	{
 		return commonDao.getSession();
 	}
@@ -273,103 +261,103 @@ public class CommonServiceImpl implements CommonService {
 		return commonDao.findByExample(entityName, exampleEntity);
 	}
 
-	/**
-	 * 通过cq获取全部实体
-	 * 
-	 * @param <T>
-	 * @param cq
-	 * @return
-	 */
-	public <T> List<T> getListByCriteriaQuery(final CriteriaQuery cq,Boolean ispage) {
-		return commonDao.getListByCriteriaQuery(cq,ispage);
-	}
-
-	/**
-	 * 文件上传
-	 * 
-	 * @param request
-	 */
-	public <T> T  uploadFile(UploadFile uploadFile) {
-		return commonDao.uploadFile(uploadFile);
-	}
-
-	public HttpServletResponse viewOrDownloadFile(UploadFile uploadFile)
-
-	{
-		return commonDao.viewOrDownloadFile(uploadFile);
-	}
-
-	/**
-	 * 根据模板对象返回指定实体字段的封装MAP对象
-	 * 
-	 * @param template
-	 * @return
-	 */
-	public Map<Object, Object> getParametMap(Template template) {
-		return commonDao.getParametMap(template);
-	}
-
-	public String getTempleContent(Template template) {
-		return commonDao.getTempleContent(template);
-	}
-
-	/**
-	 * 生成XML文件
-	 * 
-	 * @param fileName
-	 *            XML全路径
-	 * @return
-	 */
-	public HttpServletResponse createXml(ImportFile importFile) {
-		return commonDao.createXml(importFile);
-	}
-
-	/**
-	 * 解析XML文件
-	 * 
-	 * @param fileName
-	 *            XML全路径
-	 */
-	public void parserXml(String fileName) {
-		commonDao.parserXml(fileName);
-	}
-
-	public List<ComboTree> comTree(List<TSDepart> all, ComboTree comboTree) {
-		return commonDao.comTree(all, comboTree);
-	}
-
-	/**
-	 * 根据模型生成JSON
-	 * 
-	 * @param all
-	 *            全部对象
-	 * @param in
-	 *            已拥有的对象
-	 * @param comboBox
-	 *            模型
-	 * @return
-	 */
-	public List<ComboTree> ComboTree(List all,ComboTreeModel comboTreeModel,List in) {
-		return commonDao.ComboTree(all,comboTreeModel,in);
-	}
-	/**
-	 * 构建树形数据表
-	 */
-	public List<TreeGrid> treegrid(List all, TreeGridModel treeGridModel) {
-		return commonDao.treegrid(all, treeGridModel);
-	}
-
-	/**
-	 * 获取自动完成列表
-	 * 
-	 * @param <T>
-	 * @return
-	 */
-	public <T> List<T> getAutoList(Autocomplete autocomplete) {
-		String hql = "from " + autocomplete.getEntityName() + " where " + autocomplete.getSearchField() + " like '%" + autocomplete.getTrem() + "%'";
-		List autoList = commonDao.findByQueryString(hql);
-		return autoList;
-
-	}
+//	/**
+//	 * 通过cq获取全部实体
+//	 * 
+//	 * @param <T>
+//	 * @param cq
+//	 * @return
+//	 */
+//	public <T> List<T> getListByCriteriaQuery(final CriteriaQuery cq,Boolean ispage) {
+//		return commonDao.getListByCriteriaQuery(cq,ispage);
+//	}
+//
+//	/**
+//	 * 文件上传
+//	 * 
+//	 * @param request
+//	 */
+//	public <T> T  uploadFile(UploadFile uploadFile) {
+//		return commonDao.uploadFile(uploadFile);
+//	}
+//
+//	public HttpServletResponse viewOrDownloadFile(UploadFile uploadFile)
+//
+//	{
+//		return commonDao.viewOrDownloadFile(uploadFile);
+//	}
+//
+//	/**
+//	 * 根据模板对象返回指定实体字段的封装MAP对象
+//	 * 
+//	 * @param template
+//	 * @return
+//	 */
+//	public Map<Object, Object> getParametMap(Template template) {
+//		return commonDao.getParametMap(template);
+//	}
+//
+//	public String getTempleContent(Template template) {
+//		return commonDao.getTempleContent(template);
+//	}
+//
+//	/**
+//	 * 生成XML文件
+//	 * 
+//	 * @param fileName
+//	 *            XML全路径
+//	 * @return
+//	 */
+//	public HttpServletResponse createXml(ImportFile importFile) {
+//		return commonDao.createXml(importFile);
+//	}
+//
+//	/**
+//	 * 解析XML文件
+//	 * 
+//	 * @param fileName
+//	 *            XML全路径
+//	 */
+//	public void parserXml(String fileName) {
+//		commonDao.parserXml(fileName);
+//	}
+//
+//	public List<ComboTree> comTree(List<TSDepart> all, ComboTree comboTree) {
+//		return commonDao.comTree(all, comboTree);
+//	}
+//
+//	/**
+//	 * 根据模型生成JSON
+//	 * 
+//	 * @param all
+//	 *            全部对象
+//	 * @param in
+//	 *            已拥有的对象
+//	 * @param comboBox
+//	 *            模型
+//	 * @return
+//	 */
+//	public List<ComboTree> ComboTree(List all,ComboTreeModel comboTreeModel,List in) {
+//		return commonDao.ComboTree(all,comboTreeModel,in);
+//	}
+//	/**
+//	 * 构建树形数据表
+//	 */
+//	public List<TreeGrid> treegrid(List all, TreeGridModel treeGridModel) {
+//		return commonDao.treegrid(all, treeGridModel);
+//	}
+//
+//	/**
+//	 * 获取自动完成列表
+//	 * 
+//	 * @param <T>
+//	 * @return
+//	 */
+//	public <T> List<T> getAutoList(Autocomplete autocomplete) {
+//		String hql = "from " + autocomplete.getEntityName() + " where " + autocomplete.getSearchField() + " like '%" + autocomplete.getTrem() + "%'";
+//		List autoList = commonDao.findByQueryString(hql);
+//		return autoList;
+//
+//	}
 
 }

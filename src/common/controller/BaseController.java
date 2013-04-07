@@ -30,7 +30,7 @@ public class BaseController {
 //				dateFormat, true));
 		
 		//for:时间转换问题
-		binder.registerCustomEditor(Date.class, new DateConvertEditor());
+//		binder.registerCustomEditor(Date.class, new DateConvertEditor());
 	}
 
 }
